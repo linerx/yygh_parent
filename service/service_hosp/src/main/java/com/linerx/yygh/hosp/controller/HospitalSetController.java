@@ -5,10 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.linerx.yygh.common.exception.YyghException;
 import com.linerx.yygh.common.result.Result;
 import com.linerx.yygh.hosp.service.HospitalSetService;
 import com.linerx.yygh.model.hosp.HospitalSet;
+import com.linerx.yygh.service.util.MD5;
 import com.linerx.yygh.vo.hosp.HospitalQueryVo;
+import com.linerx.yygh.vo.hosp.HospitalSetQueryVo;
+import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Wrapper;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
@@ -42,20 +47,87 @@ public class HospitalSetController {
     }
     @ApiOperation(value = "分页查询")
     @PostMapping("getPageHospital/{current}/{limit}")
-    private Result getPageHospital(@PathVariable Long current,@PathVariable Long limit,@RequestBody HospitalQueryVo hospitalQueryVo){
+    private Result getPageHospital(@PathVariable Long current,@PathVariable Long limit,@RequestBody HospitalSetQueryVo hospitalSetQueryVo){
         Page<HospitalSet> page = new Page<>(current,limit);
         //构造查询条件
         QueryWrapper<HospitalSet> wrapper = new QueryWrapper();
-        String hosname = hospitalQueryVo.getHosname();
-        String hoscode = hospitalQueryVo.getHoscode();
+        String hosname = hospitalSetQueryVo.getHosname();
+        String hoscode = hospitalSetQueryVo.getHoscode();
         if (StringUtils.isNotBlank(hosname)){
-            wrapper.like("hosname",hospitalQueryVo.getHosname());
+            wrapper.like("hosname",hospitalSetQueryVo.getHosname());
         }
         if (StringUtils.isNotBlank(hoscode)){
-            wrapper.eq("hoscode",hospitalQueryVo.getHoscode());
+            wrapper.eq("hoscode",hospitalSetQueryVo.getHoscode());
         }
         Page<HospitalSet> hospitalSetPage = hospitalSetService.page(page,wrapper);
         return Result.ok(hospitalSetPage);
 
+    }
+    @ApiOperation(value = "添加医院设置")
+    @PostMapping("addHospitalSet")
+    private Result addHospitalSet(@RequestBody HospitalSet hospitalSet){
+        hospitalSet.setStatus(1);
+        Random random = new Random();
+        hospitalSet.setSignKey(MD5.encrypt(System.currentTimeMillis()+""+ random.nextInt()));
+        boolean save = hospitalSetService.save(hospitalSet);
+        if (save){
+            return Result.ok();
+        }else{
+            return Result.fail();
+        }
+    }
+
+    @ApiOperation(value = "根据id查询医院设置")
+    @GetMapping("selectHospitalSetById/{id}")
+    private Result selectHostpitalSetById(@PathVariable Long id){
+        try {
+            int i = 1/0;
+        }catch (Exception e){
+            throw new YyghException("失败",404);
+        }
+
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        return Result.ok(hospitalSet);
+    }
+
+    @ApiOperation(value = "根据id修改医院设置")
+    @PutMapping("updateHospitalSet")
+    private Result updateHospitalSet(@RequestBody HospitalSet hospitalSet){
+        boolean result = hospitalSetService.updateById(hospitalSet);
+        if (result){
+            return Result.ok();
+        }else{
+            return Result.fail();
+        }
+    }
+
+    @ApiOperation(value = "根据id批量删除医院设置")
+    @DeleteMapping("deleteHospitalSet")
+    private Result deleteHospitalSet(@RequestBody List<Long> ids){
+        boolean result = hospitalSetService.removeByIds(ids);
+        if (result){
+            return Result.ok();
+        }else{
+            return Result.fail();
+        }
+    }
+
+    @ApiOperation(value = "医院设置锁定与解锁")
+    @PutMapping("lockHospitalSet/{id}/{state}")
+    private Result lockHospitalSet(@PathVariable Long id,@PathVariable Integer state){
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        hospitalSet.setStatus(state);
+        hospitalSetService.updateById(hospitalSet);
+        return Result.ok();
+    }
+
+    @ApiOperation(value = "发送签名秘钥")
+    @PutMapping("sendKey/{id}")
+    private Result sendKey(@PathVariable Long id){
+        HospitalSet hospitalSet = hospitalSetService.getById(id);
+        String hoscode = hospitalSet.getHoscode();
+        String signKey = hospitalSet.getSignKey();
+        //TODO 发送短信
+        return Result.ok();
     }
 }
