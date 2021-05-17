@@ -10,20 +10,17 @@ import com.linerx.yygh.common.result.Result;
 import com.linerx.yygh.hosp.service.HospitalSetService;
 import com.linerx.yygh.model.hosp.HospitalSet;
 import com.linerx.yygh.service.util.MD5;
-import com.linerx.yygh.vo.hosp.HospitalQueryVo;
 import com.linerx.yygh.vo.hosp.HospitalSetQueryVo;
-import com.sun.xml.internal.bind.v2.TODO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Wrapper;
 import java.util.List;
 import java.util.Random;
 
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin
 public class HospitalSetController {
     @Autowired
     private HospitalSetService hospitalSetService;
