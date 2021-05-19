@@ -42,6 +42,7 @@ public class HospitalSetController {
             return Result.fail();
         }
     }
+
     @ApiOperation(value = "分页查询")
     @PostMapping("getPageHospital/{current}/{limit}")
     private Result getPageHospital(@PathVariable Long current,@PathVariable Long limit,@RequestBody HospitalSetQueryVo hospitalSetQueryVo){
@@ -58,8 +59,8 @@ public class HospitalSetController {
         }
         Page<HospitalSet> hospitalSetPage = hospitalSetService.page(page,wrapper);
         return Result.ok(hospitalSetPage);
-
     }
+
     @ApiOperation(value = "添加医院设置")
     @PostMapping("addHospitalSet")
     private Result addHospitalSet(@RequestBody HospitalSet hospitalSet){
@@ -76,13 +77,7 @@ public class HospitalSetController {
 
     @ApiOperation(value = "根据id查询医院设置")
     @GetMapping("selectHospitalSetById/{id}")
-    private Result selectHostpitalSetById(@PathVariable Long id){
-        try {
-            int i = 1/0;
-        }catch (Exception e){
-            throw new YyghException("失败",404);
-        }
-
+    private Result selectHospitalSetById(@PathVariable Long id){
         HospitalSet hospitalSet = hospitalSetService.getById(id);
         return Result.ok(hospitalSet);
     }
