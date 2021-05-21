@@ -13,6 +13,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>service_user</module>
+        <module>service_hosp</module>
+        <module>service_cmn</module>
     </modules>
     <dependencies>
         <dependency>

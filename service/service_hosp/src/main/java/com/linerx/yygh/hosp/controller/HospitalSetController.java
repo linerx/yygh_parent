@@ -49,13 +49,13 @@ public class HospitalSetController {
         Page<HospitalSet> page = new Page<>(current,limit);
         //构造查询条件
         QueryWrapper<HospitalSet> wrapper = new QueryWrapper();
-        String hosname = hospitalSetQueryVo.getHosname();
-        String hoscode = hospitalSetQueryVo.getHoscode();
-        if (StringUtils.isNotBlank(hosname)){
-            wrapper.like("hosname",hospitalSetQueryVo.getHosname());
+        String hosName = hospitalSetQueryVo.getHosname();
+        String hosCode = hospitalSetQueryVo.getHoscode();
+        if (StringUtils.isNotBlank(hosName)){
+            wrapper.like("hosName",hospitalSetQueryVo.getHosname());
         }
-        if (StringUtils.isNotBlank(hoscode)){
-            wrapper.eq("hoscode",hospitalSetQueryVo.getHoscode());
+        if (StringUtils.isNotBlank(hosCode)){
+            wrapper.eq("hosCode",hospitalSetQueryVo.getHoscode());
         }
         Page<HospitalSet> hospitalSetPage = hospitalSetService.page(page,wrapper);
         return Result.ok(hospitalSetPage);
@@ -117,7 +117,7 @@ public class HospitalSetController {
     @PutMapping("sendKey/{id}")
     private Result sendKey(@PathVariable Long id){
         HospitalSet hospitalSet = hospitalSetService.getById(id);
-        String hoscode = hospitalSet.getHoscode();
+        String hosCode = hospitalSet.getHoscode();
         String signKey = hospitalSet.getSignKey();
         //TODO 发送短信
         return Result.ok();
